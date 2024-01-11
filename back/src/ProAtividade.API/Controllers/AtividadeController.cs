@@ -26,12 +26,12 @@ public class AtividadeController : ControllerBase
 		=> _dataContext.Atividades.FirstOrDefault(x => x.Id == id);
 
 	[HttpPost]
-	public IEnumerable<Atividade> Post(Atividade atividade)
+	public Atividade? Post(Atividade atividade)
 	{
 		_dataContext.Add(atividade);
 
 		if (_dataContext.SaveChanges() > 0)
-			return _dataContext.Atividades;
+			return _dataContext.Atividades.FirstOrDefault(x => x.Id == atividade.Id);
 		else
 			throw new Exception("Atividade não adicionada");
 	}
@@ -43,6 +43,7 @@ public class AtividadeController : ControllerBase
 			throw new Exception("Tentativa de atualizar Atividade diferente!");
 
 		_dataContext.Update(atividade);
+
 		if (_dataContext.SaveChanges() > 0)
 			return _dataContext.Atividades.FirstOrDefault(ativ => ativ.Id == id);
 		else
