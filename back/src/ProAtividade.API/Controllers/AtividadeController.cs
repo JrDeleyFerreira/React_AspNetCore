@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using ProAtividade.API.Data;
-using ProAtividade.API.Models;
+using ProAtividade.Domain.Entities;
+using ProAtividade.Domain.Interfaces.Services;
 
 namespace ProAtividade.API.Controllers;
 
@@ -12,54 +8,95 @@ namespace ProAtividade.API.Controllers;
 [Route("api/[controller]")]
 public class AtividadeController : ControllerBase
 {
-	private readonly DataContext _dataContext;
+	private readonly IAtividadeService _service;
 
-	public AtividadeController(DataContext dataContext)
-		=> _dataContext = dataContext;
+	public AtividadeController(IAtividadeService service)
+		=> _service = service;
 
 	[HttpGet]
-	public IEnumerable<Atividade> Get()
-		=> _dataContext.Atividades;
+	public async Task<IActionResult> Get()
+	{
+		try
+		{
+			var atividades = await _service.PegarTodasAtividadesAsync();
+			return atividades is not null ? Ok(atividades) : NoContent();
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(StatusCodes.Status500InternalServerError,
+				$"Erro ao tentar recuperar Atividades. Erro: {ex.Message}");
+		}
+	}
 
 	[HttpGet("{id}")]
-	public Atividade? Get(int id)
-		=> _dataContext.Atividades.FirstOrDefault(x => x.Id == id);
+	public async Task<IActionResult> Get(int id)
+	{
+		try
+		{
+			var atividade = await _service.PegarAtividadePorIdAsync(id);
+			return atividade is not null ? Ok(atividade) : NoContent();
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(StatusCodes.Status500InternalServerError,
+				$"Erro ao tentar recuperar Atividade com ID: {id}. Erro: {ex.Message}");
+		}
+	}
 
 	[HttpPost]
-	public Atividade? Post(Atividade atividade)
+	public async Task<IActionResult> Post(Atividade atividade)
 	{
-		_dataContext.Add(atividade);
-
-		if (_dataContext.SaveChanges() > 0)
-			return _dataContext.Atividades.FirstOrDefault(x => x.Id == atividade.Id);
-		else
-			throw new Exception("Atividade não adicionada");
+		try
+		{
+			var entity = await _service.AddAtividadeAsync(atividade);
+			return entity is not null ? Ok(entity) : NoContent();
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(StatusCodes.Status500InternalServerError,
+				$"Erro ao tentar adicionar Atividade. Erro: {ex.Message}");
+		}
 	}
 
 	[HttpPut("{id}")]
-	public Atividade? Put(int id, Atividade atividade)
+	public async Task<IActionResult> Put(Atividade atividade)
 	{
-		if (atividade.Id != id)
-			throw new Exception("Tentativa de atualizar Atividade diferente!");
+		try
+		{
+			var entity = await _service.AtualizarAtividadeAsync(atividade);
 
-		_dataContext.Update(atividade);
+			if (entity is null)
+				return StatusCode(StatusCodes.Status409Conflict,
+					$"Atividade de ID: {atividade.Id}, não encontrada!");
 
-		if (_dataContext.SaveChanges() > 0)
-			return _dataContext.Atividades.FirstOrDefault(ativ => ativ.Id == id);
-		else
-			return null;
+			return Ok(atividade);
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(StatusCodes.Status500InternalServerError,
+				$"Erro ao tentar atualizar Atividade com ID: {atividade.Id}. Erro: {ex.Message}");
+		}
 	}
 
 	[HttpDelete("{id}")]
-	public bool Delete(int id)
+	public async Task<IActionResult> Delete(int id)
 	{
-		var atividade = _dataContext.Atividades.FirstOrDefault(ativ => ativ.Id == id);
+		try
+		{
+			var atividade = await _service.PegarAtividadePorIdAsync(id);
 
-		if (atividade is null)
-			throw new Exception("Atividade não encontrada! Informe um ID válido.");
+			if (atividade is null)
+				return StatusCode(StatusCodes.Status409Conflict,
+					$"Atividade de ID: {id} não encontrada!");
 
-		_dataContext.Remove(atividade);
-
-		return _dataContext.SaveChanges() > 0;
+			return await _service.DeletarAtividadeAsync(id)
+				? Ok(new { message = "Deletado" })
+				: BadRequest("Ocorreu um problema não especificado ao tentar deletar.");
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(StatusCodes.Status500InternalServerError,
+				$"Erro ao tentar deletar Atividade com ID: {id}. Erro: {ex.Message}");
+		}
 	}
 }
