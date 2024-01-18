@@ -1,11 +1,3 @@
-using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore;
-using ProAtividade.Data.Context;
-using ProAtividade.Data.Repositories;
-using ProAtividade.Domain.Interfaces.Repositories;
-using ProAtividade.Domain.Interfaces.Services;
-using ProAtividade.Domain.Services;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
