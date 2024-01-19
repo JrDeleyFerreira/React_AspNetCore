@@ -1,8 +1,8 @@
 import React from 'react';
-import TitlePages from "./../../components/TitlePages";
+import TitlePages from "../../components/TitlePages.tsx";
 import { useNavigate, useParams } from 'react-router-dom';
 
-export default function ClienteForm() {
+const ClienteForm = () => {
 
     let navigate = useNavigate();
     let { id } = useParams();
@@ -19,5 +19,7 @@ export default function ClienteForm() {
             </TitlePages>
             <div></div>
         </>
-    )
+    );
 }
+
+export default ClienteForm;

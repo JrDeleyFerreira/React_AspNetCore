@@ -1,23 +1,27 @@
+import React from 'react';
 import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
-export default function Menu() {
+const Menu = () => {
+
+	const getActiveRout = useLocation().pathname ? 'Active' : '';
+
 	// Componente React em - https://react-bootstrap.github.io/
 	return (
-		<Navbar bg='dark' expand="lg" className="bg-body-tertiary" variant='dark'>
+		<Navbar bg='light' expand="lg" className="bg-body-tertiary" variant='light'>
 			<Container>
 				<Navbar.Brand as={NavLink} to='/'>Full-Stack React/C#</Navbar.Brand>
 				<Navbar.Toggle aria-controls="basic-navbar-nav" />
 				<Navbar.Collapse id="basic-navbar-nav">
 					<Nav className="me-auto">
 						<Nav.Link
-							className={(navData) => navData.isActive ? 'Active' : ''}
+							className={getActiveRout}
 							as={NavLink}
-							to='/cliente/list'>Clientes</Nav.Link>
+							to='/cliente'>Clientes</Nav.Link>
 						<Nav.Link
-							className={(navData) => navData.isActive ? 'Active' : ''}
+							className={getActiveRout}
 							as={NavLink}
-							to='/atividade/list'>Atividdes</Nav.Link>
+							to='/atividade'>Atividdes</Nav.Link>
 					</Nav>
 					<Nav>
 						<NavDropdown align="end" title="Dropdown" id="basic-nav-dropdown">
@@ -30,5 +34,7 @@ export default function Menu() {
 				</Navbar.Collapse>
 			</Container>
 		</Navbar>
-	)
+	);
 }
+
+export default Menu;

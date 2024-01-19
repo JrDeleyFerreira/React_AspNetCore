@@ -1,12 +1,13 @@
-import Atividade from './pages/atividades/Atividade';
-import './App.css';
-import { Route, Routes } from 'react-router-dom';
-import Cliente from "./pages/clientes/Cliente";
-import Dashboard from "./pages/dashboard/Dashboard";
-import ClienteForm from './pages/clientes/ClienteForm';
-import PageNotFound from "./pages/PageNotFound";
 
-export default function App() {
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Atividade from "./pages/atividades/Atividade.tsx";
+import Dashboard from "./pages/dashboard/Dashboard.tsx";
+import Cliente from "./pages/clientes/Cliente.tsx";
+import ClienteForm from "./pages/clientes/ClienteForm.tsx";
+import PageNotFound from "./pages/PageNotFound.tsx";
+
+const App = () => {
 
 	return (
 		<Routes> {/* Evita mais de 1 match da rota */}
@@ -20,3 +21,5 @@ export default function App() {
 		</Routes>
 	);
 }
+
+export default App;

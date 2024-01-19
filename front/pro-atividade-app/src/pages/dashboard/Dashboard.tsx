@@ -1,8 +1,8 @@
-import React from 'react'
-import TitlePages from '../../components/TitlePages'
+import React from 'react';
 import { Card, Row, Col } from 'react-bootstrap';
+import TitlePages from "./../../components/TitlePages.tsx";
 
-export default function Dashboard() {
+const Dashboard = () => {
     return (
         <>
             <TitlePages title='Dashboard' />
@@ -55,3 +55,5 @@ export default function Dashboard() {
         </>
     )
 }
+
+export default Dashboard;
